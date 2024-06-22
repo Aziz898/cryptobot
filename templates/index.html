@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Prices</title>
+</head>
+<body>
+    <h1>Crypto Prices</h1>
+    <ul id="crypto-list">
+        {% for crypto in cryptocurrencies %}
+        <li>{{ crypto }}</li>
+        {% endfor %}
+    </ul>
+    <form id="add-crypto-form">
+        <input type="text" id="crypto-name" placeholder="Add cryptocurrency">
+        <button type="submit">Add</button>
+    </form>
+
+    <script>
+        document.getElementById('add-crypto-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var cryptoName = document.getElementById('crypto-name').value;
+            fetch('/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({crypto: cryptoName})
+            })
+            .then(response => response.json())
+            .then(data => {
+                var cryptoList = document.getElementById('crypto-list');
+                cryptoList.innerHTML = '';
+                data.forEach(function(crypto) {
+                    var li = document.createElement('li');
+                    li.textContent = crypto;
+                    cryptoList.appendChild(li);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
